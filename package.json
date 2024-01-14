@@ -9,6 +9,7 @@
   "author": "Galaxine-senpai (Ayden Gaines)",
   "license": "GNU GPLv3",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.8"
   }
 }
