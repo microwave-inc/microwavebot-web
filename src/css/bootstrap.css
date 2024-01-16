@@ -206,6 +206,10 @@ a {
   color: #0d6efd;
   text-decoration: underline;
 }
+.hidden {
+  text-decoration: none;
+  color:rgba(0, 0, 0, 0.1);
+}
 a:hover {
   color: #0a58ca;
 }
