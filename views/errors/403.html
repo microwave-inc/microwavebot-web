@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #333333;
+            color: white;
+        }
+        .error-container {
+            text-align: center;
+        }
+        .error-container h1 {
+            font-size: 3em;
+        }
+        .error-container p {
+            font-size: 1.5em;
+        }
+        .home-btn {
+            color: white;
+            background-color: #007BFF;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="white">403</text>
+        </svg>
+        <p>Forbidden: You don't have permission to access this resource.</p>
+        <a href="/" class="home-btn">Back to Home</a>
+    </div>
+    <script>
+        document.querySelector('.home-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>
