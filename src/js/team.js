@@ -21,11 +21,13 @@ $(document).ready(function() {
           img.onload = function() {
             const ownerList =
             `<div class='col-md-4'>
-                <div class='card mb-3' style='display: flex; flex-direction: column; align-items: center;'>
-                    <img class='card-img-top' src='${output.avatar.link}' alt='Card image cap' style='border-radius: 50%; width: 50%; height: auto;'>
-                    <div class='card-title'>${output.global_name}</div>
-                    <div class='card-body'>${elementOwners.post} <br>
-                    <a href="mailto:${elementOwners.email}">Official Email</a></div>
+                <div class='card mb-3 shadow' style='display: flex; flex-direction: column; align-items: center;'>
+                    <img class='card-img-top shadow' src='${output.avatar.link}' alt='Card image cap' style='border-radius: 50%; width: 50%; height: auto; margin: 10px;'>
+                    <div class='card-title' style='margin-top: 3px;'>${output.global_name}</div>
+                    <div class='card-body'>
+                      <h6>${elementOwners.post}</h6>
+                      <a href="mailto:${elementOwners.email}" style=''>Official Email</a>
+                    </div>
                 </div>
             </div>`;
             boxOwners.innerHTML += ownerList;
