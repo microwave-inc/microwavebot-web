@@ -16,22 +16,25 @@ $(document).ready(function() {
             .querySelectorAll(".banner img")
             .forEach((imgs) => (imgs.src = "../static/img/bot.png"));
         } else {
-          const img = new Image();
-          img.src = output.avatar.link;
-          img.onload = function() {
-            const ownerList =
-            `<div class='col-md-4'>
-                <div class='card mb-3 shadow' style='display: flex; flex-direction: column; align-items: center;'>
-                    <img class='card-img-top shadow' src='${output.avatar.link}' alt='Card image cap' style='border-radius: 50%; width: 50%; height: auto; margin: 10px;'>
-                    <div class='card-title' style='margin-top: 3px;'>${output.global_name}</div>
-                    <div class='card-body'>
-                      <h6>${elementOwners.post}</h6>
-                      <a href="mailto:${elementOwners.email}" style=''>Official Email</a>
-                    </div>
-                </div>
-            </div>`;
-            boxOwners.innerHTML += ownerList;
-          };
+          const ownerList = document.createElement('div');
+          ownerList.className = 'col-md-4';
+          ownerList.innerHTML = `
+            <div class='card mb-3 shadow' style='display: flex; flex-direction: column; align-items: center;' data-tilt>
+              <img class='card-img-top shadow' src='${output.avatar.link}' alt='Card image cap' style='border-radius: 50%; width: 50%; height: auto; margin: 10px;'>
+              <div class='card-title' style='margin-top: 3px;'>${output.global_name}</div>
+              <div class='card-body'>
+                <h6>${elementOwners.post}</h6>
+                <a href="mailto:${elementOwners.email}" style=''>Official Email</a>
+              </div>
+            </div>
+          `;
+          boxOwners.appendChild(ownerList);
+          VanillaTilt.init(document.querySelectorAll(".card"), {
+            max: 25,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.3
+          });
         }
       });
     }
