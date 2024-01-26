@@ -1,4 +1,8 @@
 const express = require("express");
+const dotenv = require("dotenv");
+
+// Load the .env file
+dotenv.config();
 
 const app = express();
 const morgan = require("morgan");
@@ -26,7 +30,17 @@ const img = express.static('/src/img');
 
 // Express settings
 const port =
-  process.env.PORT || 80;
+  process.env.PORT || 80
+
+const status = process.env.STATUS || 'DEVELOPMENT';
+
+if (status == 'DEVELOPMENT') {
+    console.log('Running in development mode.');
+}
+if (status == 'PRODUCTION') {
+    // load admin panel
+    app.router('/admin', require('./routes/admin.js'));
+}
 
 // serve all files in the css, js, and img directories
 app.use('/css', express.static(__dirname + '/src/css'));

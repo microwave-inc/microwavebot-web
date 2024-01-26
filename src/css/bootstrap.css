@@ -208,6 +208,7 @@ a {
 }
 .hidden {
   text-decoration: none;
+  color: #000; /* Dark shade color */
 }
 a:hover {
   color: #0a58ca;
