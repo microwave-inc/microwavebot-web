@@ -38,8 +38,7 @@ if (status == 'DEVELOPMENT') {
     console.log('Running in development mode.');
 }
 if (status == 'PRODUCTION') {
-    // load admin panel
-    app.router('/admin', require('./routes/admin.js'));
+    // TODO: Add production settings & admin panel
 }
 
 // serve all files in the css, js, and img directories
