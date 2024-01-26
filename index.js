@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const moment = require("moment");
 
 // Load the .env file
 dotenv.config();
@@ -18,10 +19,19 @@ open(__dirname + '/logs/access.log', 'w', (err, file) => {
         console.log(err);
     }
 });
+
+morgan.token('date', (req, res, format) => {
+    return moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ'); // Set to the systems timezone (hopefully)
+  });
+
 // create a write stream (in append mode)
 const accessLogStream = createWriteStream(__dirname + '/logs/access.log', { flags: 'a' });
 // Yellow is info, green is religated to status codes
-app.use(morgan(':date[web] | :method :url - :status - :response-time ms | :req[cf-ipcountry]', { stream: accessLogStream }));
+app.use(morgan(`:date | :method :url | :req[CF-connecting-ip] - :status - :response-time ms | :req[cf-ipcountry]`, { stream: accessLogStream }));
+
+// Now print it to console w colors
+
+app.use(morgan(`${blue}:date[web]${reset} | :method :url | :req[CF-connecting-ip] - ${yellow}(':status')} - :response-time ms${reset} | :req[cf-ipcountry]`));
 
 // Paths to define for later use idfk
 const css = express.static('/src/css');
