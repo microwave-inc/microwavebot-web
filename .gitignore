@@ -5,3 +5,5 @@ certs/*
 private/*
 *.log
 *.env
+robots.txt
+sitemap.xml

@@ -12,26 +12,34 @@ const { red, blue, green, yellow, cyan, magenta, white, black, reset } = require
 // log all morgan logs to a file
 const { open, createWriteStream } = require('fs');
 
+let todays_date = moment().format('DD-MM-YYYY');
 
 // create the file access.log in /logs/
-open(__dirname + '/logs/access.log', 'w', (err, file) => {
+open(__dirname + `/logs/${todays_date}.log`, 'w', (err, file) => {
     if (err) {
         console.log(err);
     }
+    // IF file does exist, do nothing
+    if (file) {
+        console.log(`${yellow}Log file exists, skipping${reset}`);
+    }
+    console.log(`${green}Log file created${reset}`);
 });
 
 morgan.token('date', (req, res, format) => {
     return moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ'); // Set to the systems timezone (hopefully)
   });
 
+const getIP = ':req[CF-connecting-ip]' || ':remote-addr';
+
 // create a write stream (in append mode)
-const accessLogStream = createWriteStream(__dirname + '/logs/access.log', { flags: 'a' });
+const accessLogStream = createWriteStream(__dirname + `/logs/${todays_date}.log`, { flags: 'a' });
 // Yellow is info, green is religated to status codes
-app.use(morgan(`:date | :method :url | :req[CF-connecting-ip] - :status - :response-time ms | :req[cf-ipcountry]`, { stream: accessLogStream }));
+app.use(morgan(`:date | :method :url | ${getIP} - :status - :response-time ms | :req[cf-ipcountry]`, { stream: accessLogStream }));
 
 // Now print it to console w colors
 
-app.use(morgan(`${blue}:date[web]${reset} | :method :url | :req[CF-connecting-ip] - ${yellow}(':status')} - :response-time ms${reset} | :req[cf-ipcountry]`));
+app.use(morgan(`${blue}:date[web]${reset} | :method :url | ${getIP} - ${yellow}(':status')} - :response-time ms${reset} | :req[cf-ipcountry]`));
 
 // Paths to define for later use idfk
 const css = express.static('/src/css');
@@ -45,7 +53,7 @@ const port =
 const status = process.env.STATUS || 'DEVELOPMENT';
 
 if (status == 'DEVELOPMENT') {
-    console.log('Running in development mode.');
+    console.log(`${yellow}Running in development mode.${reset}`);
 }
 if (status == 'PRODUCTION') {
     // TODO: Add production settings & admin panel
@@ -96,5 +104,5 @@ if (os.platform() === 'linux') {
 
 // start the server
 app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
+    console.log(`${green}Server started on port ${yellow}${port}${reset}`);
 });
