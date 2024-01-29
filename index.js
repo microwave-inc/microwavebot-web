@@ -7,102 +7,121 @@ dotenv.config();
 
 const app = express();
 const morgan = require("morgan");
-const { red, blue, green, yellow, cyan, magenta, white, black, reset } = require("./utils/color.js");
+const {
+  red,
+  blue,
+  green,
+  yellow,
+  cyan,
+  magenta,
+  white,
+  black,
+  reset,
+} = require("./utils/color.js");
 
 // log all morgan logs to a file
-const { open, createWriteStream } = require('fs');
+const { open, createWriteStream } = require("fs");
 
-let todays_date = moment().format('DD-MM-YYYY');
+let todays_date = moment().format("DD-MM-YYYY");
 
 // create the file access.log in /logs/
-open(__dirname + `/logs/${todays_date}.log`, 'w', (err, file) => {
-    if (err) {
-        console.log(err);
-    }
-    // IF file does exist, do nothing
-    if (file) {
-        console.log(`${yellow}Log file exists, skipping${reset}`);
-    }
-    console.log(`${green}Log file created${reset}`);
+open(__dirname + `/logs/${todays_date}.log`, "w", (err, file) => {
+  if (err) {
+    console.log(err);
+  }
+  // IF file does exist, do nothing
+  if (file) {
+    console.log(`${yellow}Log file exists, skipping${reset}`);
+  }
+  console.log(`${green}Log file created${reset}`);
 });
 
-morgan.token('date', (req, res, format) => {
-    return moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ'); // Set to the systems timezone (hopefully)
-  });
+morgan.token("date", (req, res, format) => {
+  return moment().format("ddd, DD MMM YYYY HH:mm:ss ZZ"); // Set to the systems timezone (hopefully)
+});
 
-const getIP = ':req[CF-connecting-ip]' || ':remote-addr';
+const getIP = ":req[CF-connecting-ip]" || ":remote-addr";
 
 // create a write stream (in append mode)
-const accessLogStream = createWriteStream(__dirname + `/logs/${todays_date}.log`, { flags: 'a' });
+const accessLogStream = createWriteStream(
+  __dirname + `/logs/${todays_date}.log`,
+  { flags: "a" }
+);
 // Yellow is info, green is religated to status codes
-app.use(morgan(`:date | :method :url | ${getIP} - :status - :response-time ms | :req[cf-ipcountry]`, { stream: accessLogStream }));
+app.use(
+  morgan(
+    `:date | :method :url | ${getIP} - :status - :response-time ms | :req[cf-ipcountry]`,
+    { stream: accessLogStream }
+  )
+);
 
 // Now print it to console w colors
 
-app.use(morgan(`${blue}:date[web]${reset} | :method :url | ${getIP} - ${yellow}(':status')} - :response-time ms${reset} | :req[cf-ipcountry]`));
+app.use(
+  morgan(
+    `${blue}:date[web]${reset} | :method :url | ${getIP} - ${yellow}(':status')} - :response-time ms${reset} | :req[cf-ipcountry]`
+  )
+);
 
 // Paths to define for later use idfk
-const css = express.static('/src/css');
-const js =  express.static('/src/js');
-const img = express.static('/src/img');
+const css = express.static("/src/css");
+const js = express.static("/src/js");
+const img = express.static("/src/img");
 
 // Express settings
-const port =
-  process.env.PORT || 80
+const port = process.env.PORT || 80;
 
-const status = process.env.STATUS || 'DEVELOPMENT';
+const status = process.env.STATUS || "DEVELOPMENT";
 
-if (status == 'DEVELOPMENT') {
-    console.log(`${yellow}Running in development mode.${reset}`);
+if (status == "DEVELOPMENT") {
+  console.log(`${yellow}Running in development mode.${reset}`);
 }
-if (status == 'PRODUCTION') {
-    // TODO: Add production settings & admin panel
+if (status == "PRODUCTION") {
+  // TODO: Add production settings & admin panel
 }
 
 // serve all files in the css, js, and img directories
-app.use('/css', express.static(__dirname + '/src/css'));
-app.use('/js', express.static(__dirname + '/src/js'));
-app.use('/img', express.static(__dirname + '/src/img'));
+app.use("/css", express.static(__dirname + "/src/css"));
+app.use("/js", express.static(__dirname + "/src/js"));
+app.use("/img", express.static(__dirname + "/src/img"));
 
 // Express routes
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/views/index.html');
-})
-
-app.get('/mrs-gaines', function(req, res) {
-    res.sendFile(__dirname + '/views/mrs-gaines.html');
-})
-
-app.get('/status', function(req, res) {
-    // send user to status.microwavebot.com
-    res.redirect(301, 'https://status.microwavebot.com');
-})
-
-
-// Will move errors to a router later on
-app.use(function(req, res, next) {
-    res.status(404).sendFile(__dirname + '/views/errors/404.html');
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + "/views/index.html");
 });
 
-app.use(function(req, res, next) {
-    res.status(403).sendFile(__dirname + '/views/errors/403.html');
-})
+app.get("/mrs-gaines", function (req, res) {
+  res.sendFile(__dirname + "/views/mrs-gaines.html");
+});
+
+app.get("/status", function (req, res) {
+  // send user to status.microwavebot.com
+  res.redirect(301, "https://status.microwavebot.com");
+});
+
+// Will move errors to a router later on
+app.use(function (req, res, next) {
+  res.status(404).sendFile(__dirname + "/views/errors/404.html");
+});
+
+app.use(function (req, res, next) {
+  res.status(403).sendFile(__dirname + "/views/errors/403.html");
+});
 
 // Linux only, this also presumes you have sudo perms
-const os = require('os');
-const { exec } = require('child_process');
-if (os.platform() === 'linux') {
-    exec(`fuser -k ${port}/tcp`, (err, stdout, stderr) => {
-        if (err) {
-            console.log(err);
-        }
-    })
+const os = require("os");
+const { exec } = require("child_process");
+if (os.platform() === "linux") {
+  exec(`fuser -k ${port}/tcp`, (err, stdout, stderr) => {
+    if (err) {
+      console.log(err);
+    }
+  });
 } else {
-    console.log('This feature is only available on Linux.');
+  console.log("This feature is only available on Linux.");
 }
-
 
 // start the server
 app.listen(port, () => {
-    console.log(`${green}Server started on port ${yellow}${port}${reset}`);
+  console.log(`${green}Server started on port ${yellow}${port}${reset}`);
 });
