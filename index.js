@@ -49,18 +49,47 @@ const accessLogStream = createWriteStream(
 );
 // Yellow is info, green is religated to status codes
 app.use(
-  morgan(
-    `:date | :method :url | ${getIP} - :status - :response-time ms | :req[cf-ipcountry]`,
-    { stream: accessLogStream }
-  )
+  morgan((tokens, req, res) => {
+    let status = tokens.status(req, res);
+    status = String(status).padEnd(3); // Pad status code to width of 3
+
+    let method = tokens.method(req, res);
+    method = String(method).padEnd(2); // Pad method to width of 7
+
+    let url = tokens.url(req, res);
+    url = String(url).padEnd(20); // Pad url to width of 40
+
+    let ip = req.headers['CF-connecting-ip'] || req.socket.remoteAddress;
+    ip = String(ip).replace('::ffff:', '').padEnd(15);
+
+    let ipCountry = req.headers['cf-ipcountry'] || '';
+    ipCountry = String(ipCountry).padEnd(5); // Pad IP country to width of 5
+
+    return tokens.date(req, res) + " | [" + method + "] " + url + " | " + ip + " - Status: " + status + " | " + ipCountry;
+  }, { stream: accessLogStream })
 );
 
 // Now print it to console w colors
-
 app.use(
-  morgan(
-    `${blue}:date[web]${reset} | :method :url | ${getIP} - ${yellow}(':status')} - :response-time ms${reset} | :req[cf-ipcountry]`
-  )
+  morgan((tokens, req, res) => {
+    let status = tokens.status(req, res);
+    status = String(status).padEnd(3); // Pad status code to width of 3
+
+    let method = tokens.method(req, res);
+    method = String(method).padEnd(2); // Pad method to width of 7
+
+    let url = tokens.url(req, res);
+    url = String(url).padEnd(20); // Pad url to width of 40
+
+    let ip = req.headers['CF-connecting-ip'] || req.socket.remoteAddress;
+    ipnonformat = ip.replace('::ffff:', '')
+    ip = String(ipnonformat).padEnd(15);
+
+    let ipCountry = req.headers['cf-ipcountry'] || '';
+    ipCountry = String(ipCountry).padEnd(5); // Pad IP country to width of 5
+
+    return `${blue}${tokens.date(req, res)}${reset} | [${yellow}${method}${reset}] ${url} | ${ip} - Status: ${yellow}${status}${reset} | ${ipCountry}`;
+  })
 );
 
 // Paths to define for later use idfk
@@ -112,11 +141,7 @@ app.use(function (req, res, next) {
 const os = require("os");
 const { exec } = require("child_process");
 if (os.platform() === "linux") {
-  exec(`fuser -k ${port}/tcp`, (err, stdout, stderr) => {
-    if (err) {
-      console.log(err);
-    }
-  });
+  exec(`fuser -k ${port}/tcp`);
 } else {
   console.log("This feature is only available on Linux.");
 }
