@@ -40,8 +40,6 @@ morgan.token("date", (req, res, format) => {
   return moment().format("ddd, DD MMM YYYY HH:mm:ss ZZ"); // Set to the systems timezone (hopefully)
 });
 
-const getIP = ":req[CF-connecting-ip]" || ":remote-addr";
-
 // create a write stream (in append mode)
 const accessLogStream = createWriteStream(
   __dirname + `/logs/${todays_date}.log`,
@@ -62,8 +60,17 @@ app.use(
     let ip = req.headers['CF-connecting-ip'] || req.socket.remoteAddress;
     ip = String(ip).replace('::ffff:', '').padEnd(15);
 
-    let ipCountry = req.headers['cf-ipcountry'] || '';
-    ipCountry = String(ipCountry).padEnd(5); // Pad IP country to width of 5
+    let countries = require('./data/countries.json')
+
+    // Get the country abbreviation from the IP
+    let countriesabbv = req.headers['cf-ipcountry'] || '';
+
+    // Check the json file for the country abbv in the "code" var
+    // example: {"name": "Zimbabwe", "code": "ZW"}
+
+    let actualcountry = countries.find((country) => country.code === countriesabbv);
+
+    let ipCountry = actualcountry ? actualcountry.name : '';
 
     return tokens.date(req, res) + " | [" + method + "] " + url + " | " + ip + " - Status: " + status + " | " + ipCountry;
   }, { stream: accessLogStream })
@@ -82,11 +89,19 @@ app.use(
     url = String(url).padEnd(20); // Pad url to width of 40
 
     let ip = req.headers['CF-connecting-ip'] || req.socket.remoteAddress;
-    ipnonformat = ip.replace('::ffff:', '')
-    ip = String(ipnonformat).padEnd(15);
+    ip = String(ip).replace('::ffff:', '').padEnd(15);
 
-    let ipCountry = req.headers['cf-ipcountry'] || '';
-    ipCountry = String(ipCountry).padEnd(5); // Pad IP country to width of 5
+    let countries = require('./data/countries.json')
+
+    // Get the country abbreviation from the IP
+    let countriesabbv = req.headers['cf-ipcountry'] || '';
+
+    // Check the json file for the country abbv in the "code" var
+    // example: {"name": "Zimbabwe", "code": "ZW"}
+
+    let actualcountry = countries.find((country) => country.code === countriesabbv);
+
+    let ipCountry = actualcountry ? actualcountry.name : ''.padEnd(5);
 
     return `${blue}${tokens.date(req, res)}${reset} | [${yellow}${method}${reset}] ${url} | ${ip} - Status: ${yellow}${status}${reset} | ${ipCountry}`;
   })
