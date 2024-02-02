@@ -143,6 +143,10 @@ app.get("/status", function (req, res) {
   res.redirect(301, "https://status.microwavebot.com");
 });
 
+app.get("/robots.txt", function (req, res) {
+  res.sendFile(__dirname + "robots.txt"); // Just for web crawlers
+});
+
 // Will move errors to a router later on
 app.use(function (req, res, next) {
   res.status(404).sendFile(__dirname + "/views/errors/404.html");
