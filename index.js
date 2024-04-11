@@ -142,11 +142,11 @@ app.get("/status", function (req, res) {
   // send user to status.microwavebot.com
   res.redirect(301, "https://status.microwavebot.com");
 });
-
+/* // DISABLED DUE TO POSSIBLE VULNERABILITIES
 app.get("/robots.txt", function (req, res) {
-  res.sendFile(__dirname + "robots.txt"); // Just for web crawlers
+  res.sendFile("./robots.txt"); // Just for web crawlers // weird bug: Error: ENOENT: no such file or directory, stat '/home/xxxxx/microwavebot-webrobots.txt'  
 });
-
+*/
 // Will move errors to a router later on
 app.use(function (req, res, next) {
   res.status(404).sendFile(__dirname + "/views/errors/404.html");
