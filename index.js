@@ -134,10 +134,6 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-app.get("/mrs-gaines", function (req, res) {
-  res.sendFile(__dirname + "/views/mrs-gaines.html");
-});
-
 app.get("/status", function (req, res) {
   // send user to status.microwavebot.com
   res.redirect(301, "https://status.microwavebot.com");
@@ -168,4 +164,5 @@ if (os.platform() === "linux") {
 // start the server
 app.listen(port, () => {
   console.log(`${green}Server started on port ${yellow}${port}${reset}`);
+  // TODO: add check if API is online and reachable
 });
