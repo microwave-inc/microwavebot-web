@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const moment = require("moment");
+const https = require("https");
+const fs = require('fs')
 
 // Load the .env file
 dotenv.config();
@@ -18,6 +20,15 @@ const {
   black,
   reset,
 } = require("./utils/color.js");
+
+function forceHTTPS(req, res, next) {
+  if (req.headers['x-forwarded-proto'] !== 'https' && req.headers['x-forwarded-proto'] !== undefined) {
+    return res.redirect(301, 'https://' + req.headers.host + req.url);
+  }
+  return next();
+}
+
+app.use(forceHTTPS);
 
 // log all morgan logs to a file
 const { open, createWriteStream } = require("fs");
@@ -138,11 +149,10 @@ app.get("/status", function (req, res) {
   // send user to status.microwavebot.com
   res.redirect(301, "https://status.microwavebot.com");
 });
-/* // DISABLED DUE TO POSSIBLE VULNERABILITIES
+
 app.get("/robots.txt", function (req, res) {
-  res.sendFile("./robots.txt"); // Just for web crawlers // weird bug: Error: ENOENT: no such file or directory, stat '/home/xxxxx/microwavebot-webrobots.txt'  
+  res.sendFile(__dirname + "/robots.txt"); // Correctly does the Robotx.txt
 });
-*/
 // Will move errors to a router later on
 app.use(function (req, res, next) {
   res.status(404).sendFile(__dirname + "/views/errors/404.html");
@@ -161,8 +171,19 @@ if (os.platform() === "linux") {
   console.log("This feature is only available on Linux.");
 }
 
-// start the server
-app.listen(port, () => {
-  console.log(`${green}Server started on port ${yellow}${port}${reset}`);
-  // TODO: add check if API is online and reachable
+if (fs.existsSync('./certs/privkey.pem') && fs.existsSync('./certs/fullchain.pem')) {
+  console.log(`${green}SSL Certificates found, starting HTTPS server${reset}`);
+  const options = {
+    key: fs.readFileSync('./certs/privkey.pem', 'utf8'),
+    cert: fs.readFileSync('./certs/fullchain.pem', 'utf8')
+  };
+  
+  https.createServer(options, app).listen(port, () => {
+    console.log(`${green}Listening on port ${port}${reset}`);
+  });
+}
+
+// Now on 80
+app.listen(80, () => {
+  console.log(`${green}Listening on port 80${reset}`);
 });

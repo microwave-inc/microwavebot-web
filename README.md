@@ -40,7 +40,7 @@ Now you should be able to access the website on `http://localhost`!
 If you wish to setup an .env file for the website, you can do so by creating a file called `.env` in the root directory of the repository, and adding the following:
 
 ```env
-PORT = 80 # The port to run the website on
+PORT = 80 # The port to run the website on // Has ability to utilize https granted both key and privatekey are there
 STATUS = DEVELOPMENT # The status of the website, can be either DEVELOPMENT or PRODUCTION will be used for things later on
 ```
 

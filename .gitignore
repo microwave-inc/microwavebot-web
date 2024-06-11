@@ -6,4 +6,6 @@ private/*
 *.log
 *.env
 robots.txt
-sitemap.xml
+sitemap.*
+*.bak
+*encrypt*
