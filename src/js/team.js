@@ -1,6 +1,6 @@
 $(document).ready(function () {
   const boxOwners = document.getElementById("owners_list");
-  const API = "https://discordlookup.mesavirep.xyz/v1/user/"; // Gracias my guy, big help for making this website work!
+  const API = "https://discordlookup.mesalytic.moe/v1/user/";
   const owners = [
     {
       id: "398959101322854400",
@@ -68,7 +68,6 @@ $(document).ready(function () {
                   keyboard: false,
                 });
 
-                const API = "https://discordlookup.mesalytic.moe/v1/user/";
                 const owner = event.target.querySelector(".card-title").innerText;
                 const ownerEmail = event.target.querySelector("a").innerText;
                 const ownerPost = event.target.querySelector("h6").innerText;
