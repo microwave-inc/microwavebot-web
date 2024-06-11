@@ -68,7 +68,7 @@ $(document).ready(function () {
                   keyboard: false,
                 });
 
-                const API = "https://discordlookup.mesavirep.xyz/v1/user/";
+                const API = "https://discordlookup.mesalytic.moe/v1/user/";
                 const owner = event.target.querySelector(".card-title").innerText;
                 const ownerEmail = event.target.querySelector("a").innerText;
                 const ownerPost = event.target.querySelector("h6").innerText;
